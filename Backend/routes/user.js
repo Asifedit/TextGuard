@@ -106,4 +106,32 @@ router.delete("/deleteData/:id", verifyToken, async (req, res) => {
         res.status(500).json({ message: "Server error" });
     }
 });
+
+// Update data endpoint
+router.put("/updateData/:id", async (req, res) => {
+    const { id } = req.params;
+    const { topic, data } = req.body;
+
+    try {
+        const user = await User.findOne({ "savedData._id": id });
+        if (!user) {
+            return res.status(404).send("User not found");
+        }
+
+        const item = user.savedData.id(id);
+        if (!item) {
+            return res.status(404).send("Item not found");
+        }
+
+        item.topic = topic;
+        item.data = data;
+        await user.save();
+
+        res.json({ savedData: user.savedData });
+    } catch (error) {
+        console.error("Error updating data", error);
+        res.status(500).send("Server error");
+    }
+});
+
 module.exports = router;

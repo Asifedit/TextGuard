@@ -11,6 +11,12 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
+const myLogger = function (req, res, next) {
+    console.log("LOGGED");
+    next();
+};
+
+app.use(myLogger);
 app.use("/api/users", userRoutes);
 
 mongoose

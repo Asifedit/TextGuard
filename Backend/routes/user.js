@@ -4,7 +4,7 @@ const router = express.Router();
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-
+const cookie =require("cookie-parser")
 const SECRET_KEY = "your_secret_key";
 
 router.post("/register", async (req, res) => {
@@ -44,6 +44,7 @@ router.post("/login", async (req, res) => {
             expiresIn: "1h",
         });
         res.status(200).json({ message: "Login successful", token });
+        cookie.signedCookie(token, token)
     } catch (error) {
         res.status(500).json({ message: "Server error" });
     }

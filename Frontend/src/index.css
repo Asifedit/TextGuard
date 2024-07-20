@@ -52,3 +52,22 @@ outline: none;
     flex-direction: column;
     padding: 7px 0px;
 }
+
+
+@keyframes custom-enter {
+0%{
+    transform: translateY(-100%);
+}
+90%{
+    transform: translateY(50%);
+}
+100%{
+    transform: translateY(0%);
+}
+
+}
+@keyframes custom-exit {
+form{
+    transform: translateX(-100%);
+}
+}

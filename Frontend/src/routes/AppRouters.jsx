@@ -8,9 +8,9 @@ import Home from "../components/Home";
 
 const AppRoot = ({ token, setToken }) => (
     <Routes>
-        <Route path="/register" element={<Register setToken={setToken} />} />
+        <Route path="/register" element={<Register setToken={setToken}/>} />
 
-        <Route path="/login" element={<Login setToken={setToken} />} />
+        <Route path="/login" element={ <Login setToken={setToken} />} />
 
         <Route
             path="/dashboard"

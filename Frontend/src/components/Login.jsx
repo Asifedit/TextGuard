@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const Login = ({ setToken }) => {
+    const SERVERurl = import.meta.env.VITE_API_URL;
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
@@ -12,10 +13,10 @@ const Login = ({ setToken }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post(
-                `http://localhost:5000/api/users/login`,
-                { username, password }
-            );
+            const response = await axios.post(`${SERVERurl}/login`, {
+                username,
+                password,
+            });
             if (response.data) {
                 setMessage(response.data.message);
                 setToken(response.data.token);
@@ -55,6 +56,7 @@ const Login = ({ setToken }) => {
                             className="h-8 rounded myShadwo2 px-3"
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
+                            required
                         />
                     </div>
                     <div className="Flex">
@@ -64,6 +66,7 @@ const Login = ({ setToken }) => {
                             className="h-8 rounded myShadwo2 px-3"
                             value={password}
                             onChange={handlePasswordChange}
+                            required
                         />
                         {password.length > 0 && (
                             <i
@@ -82,7 +85,7 @@ const Login = ({ setToken }) => {
                     </p>
                     <button
                         type="submit"
-                        className="text-center bg-lime-600 m-auto px-7 py-2 mt-10 myShadwo"
+                        className="text-center bg-lime-600 m-auto px-7 py-2 mt-10 myShadwo rounded-md"
                     >
                         Login
                     </button>

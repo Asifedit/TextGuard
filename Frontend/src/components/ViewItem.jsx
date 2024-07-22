@@ -1,5 +1,4 @@
-// ViewItem.js
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 
@@ -7,12 +6,33 @@ const ViewItem = ({ item, onClose, onUpdate }) => {
     const [editMode, setEditMode] = useState(false);
     const [topic, setTopic] = useState(item.topic);
     const [data, setData] = useState(item.data);
+    const [canResize, setCanResize] = useState(false);
+    const textAreaRef = useRef(null);
+    const SERVERurl = import.meta.env.VITE_API_URL;
+
+    useEffect(() => {
+        const checkScrollbar = () => {
+            if (textAreaRef.current) {
+                const hasVerticalScrollbar =
+                    textAreaRef.current.scrollHeight >
+                    textAreaRef.current.clientHeight;
+                setCanResize(hasVerticalScrollbar);
+            }
+        };
+
+        checkScrollbar();
+        // Check again when `data` changes
+    }, [data]);
 
     const handleSave = async () => {
         try {
             const token = localStorage.getItem("token");
+            if (!token) {
+                throw new Error("Token is missing. Please log in again.");
+            }
+
             const response = await axios.put(
-                `http://localhost:5000/api/users/updateData/${item._id}`,
+                `${SERVERurl}/updateData/${item._id}`,
                 { topic, data },
                 {
                     headers: {
@@ -20,33 +40,34 @@ const ViewItem = ({ item, onClose, onUpdate }) => {
                     },
                 }
             );
-            const updatedItem = { ...item, topic, data }; // Create updated item
-            onUpdate(updatedItem); // Call onUpdate with the updated item
+
+            const updatedItem = { ...item, topic, data };
+            onUpdate(updatedItem);
             toast.success("Data updated successfully");
             setEditMode(false);
-            onClose(); // Close the view after saving
+            onClose();
         } catch (error) {
             console.error("Error updating data", error);
             toast.error("Failed to update data");
         }
     };
 
-
     const back = () => {
-        setEditMode(false)
-    }
+        setEditMode(false);
+    };
+
     return (
-        <div className="absolute top-0 h-screen flex items-center justify-center backdrop-blur-[2px] w-screen">
-            <div className="view p-4 border border-gray-400 rounded-lg shadow-md w-5/6 bg-lime-400">
-                <button
-                    onClick={onClose}
-                    className="w-full right-1"
-                >
-                    <i className="fa-solid fa-xmark text-2xl text-left"></i>
+        <div className="absolute top-0 h-screen flex items-center justify-center backdrop-blur-[2px] w-screen z-10">
+            <div className="view p-4 flex flex-col border border-gray-400 rounded-lg shadow-md w-5/6 bg-lime-200">
+                <button onClick={onClose} className="w-full right-1 relative">
+                    <i className="fa-solid fa-xmark text-2xl  right-1 absolute "></i>
                 </button>
-                <h3 className="text-xl font-semibold mb-2">Details</h3>
+                <h3 className="text-4xl font-semibold mb-2 text-lime-700 m-auto">
+                    Details
+                </h3>
                 {editMode ? (
                     <div className="flex flex-col gap-2">
+                        <p>TOPIC</p>
                         <input
                             type="text"
                             value={topic}
@@ -54,43 +75,44 @@ const ViewItem = ({ item, onClose, onUpdate }) => {
                             placeholder="Topic"
                             className="myShadwo2 px-2 py-2 placeholder:text-blue"
                         />
-                        <input
-                            type="text"
+                        <p>DATA</p>
+                        <textarea
+                            ref={textAreaRef}
                             value={data}
                             onChange={(e) => setData(e.target.value)}
                             placeholder="Data"
-                            className="myShadwo2 px-2 py-2 placeholder:text-blue"
+                            className={`myShadwo2 px-2 py-2 placeholder:text-blue ${
+                                canResize ? "resize-y" : "resize-none"
+                            }`}
                         />
-                        <div>
-                            <button
-                                onClick={handleSave}
-                                className="myShadwo px-5 py-2 m-5"
-                            >
-                                Save
-                            </button>
-                            <button
+                        <div className="flex items-center justify-around">
+                            <i
                                 onClick={back}
-                                className="myShadwo px-5 py-2 m-5"
-                            >
-                                back
-                            </button>
+                                className="text-3xl fa-solid fa-backward fa-beat-fade p-5"
+                            ></i>
+                            <i
+                                onClick={handleSave}
+                                className="fa-solid text-3xl fa-floppy-disk fa-bounce p-5 pt-10"
+                            ></i>
                         </div>
                     </div>
                 ) : (
-                    <>
-                        <p className="break-words">
-                            <strong>Topic:</strong> {item.topic}
+                    <div className="flex flex-col text-lime-500 font-U">
+                        <p className="break-words px-3 py-6 text-lime-700">
+                            <strong className=" text-blue">Topic:</strong>{" "}
+                            {item.topic}
                         </p>
-                        <p className="break-words">
-                            <strong>Data:</strong> {item.data}
+                        <p className="break-words px-3 py-6 text-lime-700">
+                            <strong className="text-blue">
+                                Data:
+                            </strong>{" "}
+                            {item.data}
                         </p>
-                        <button
+                        <i
                             onClick={() => setEditMode(true)}
-                            className="myShadwo px-5 py-2 m-5"
-                        >
-                            Edit
-                        </button>
-                    </>
+                            className="text-2xl align-middle m-auto fa-solid fa-pen-to-square fa-shake text-lime-600"
+                        ></i>
+                    </div>
                 )}
             </div>
         </div>

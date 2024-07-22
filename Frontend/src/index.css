@@ -25,9 +25,7 @@ body {
     max-height: 100vh;
     max-width: 100vw;
 }
-body::-webkit-scrollbar {
-    display: none;
-}
+
 .myShadwo:hover {
     box-shadow: inset 3px 3px 5px rgb(184, 184, 184),
         3px 3px 5px rgb(255, 255, 255);
@@ -66,4 +64,27 @@ input:focus {
     form {
         transform: translateX(-100%);
     }
+}
+
+.btnclick {
+  background-color: rgba(203, 245, 255, 0.822);
+  color: rgb(0, 4, 255);
+  padding: 7px;
+  box-shadow: 0px 6px 0px rgb(110, 110, 110);
+  transition: all 0.2s ease;
+  transform: rotate3d(0.5, 0, 0, 18deg);
+  text-align: center;
+  font-size: 24px;
+  cursor: pointer;
+text-align: center;
+z-index: 1;
+}
+
+.btnclick:active {
+  background-color: rgb(72, 255, 0);
+  color: rgb(0, 2, 204);
+  box-shadow: 0px 0px 0px rgb(58, 58, 58);
+  transform: rotat3d(0, 0, 0, 0deg) scale(0.9);
+  position: relative;
+  top: 4px;
 }

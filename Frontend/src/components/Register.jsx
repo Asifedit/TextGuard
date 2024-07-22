@@ -1,12 +1,15 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const Register = ({ setToken }) => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [Email, setEmail] = useState("");
     const [message, setMessage] = useState("");
+    const SERVERurl = import.meta.env.VITE_API_URL;
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -14,13 +17,14 @@ const Register = ({ setToken }) => {
 
         try {
             const response = await axios.post(
-                "http://localhost:5000/api/users/register",
+                `${SERVERurl}/register`,
                 { username, password, Email }
             );
             toast.success("Registration successful!");
             setMessage(response.data.message);
             setToken(response.data.token);
             localStorage.setItem("token", response.data.token);
+            navigate("/dashboard");
         } catch (error) {
             toast.error(error.response?.data?.message || "Registration failed");
             setMessage(error.response?.data?.message || "Registration failed");
@@ -44,15 +48,17 @@ const Register = ({ setToken }) => {
                             type="text"
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
+                            required
                         />
                     </div>
                     <div className="Flex">
                         <label>Email:</label>
                         <input
                             className="myShadwo2 px-3 py-1 rounded-lg my-2"
-                            type="text"
+                            type="email"
                             value={Email}
                             onChange={(e) => setEmail(e.target.value)}
+                            required
                         />
                     </div>
                     <div className="Flex">
@@ -62,6 +68,7 @@ const Register = ({ setToken }) => {
                             type="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
+                            required
                         />
                     </div>
                     <p className="text-xs w-full pl-1">

@@ -16,7 +16,7 @@ const Nav = () => {
 
     const handeltoken = () => {
         if (token) {
-            localStorage.removeItem("token");
+            localStorage.clear("token");
             setToken(null);
             navigate("/login");
             console.log(token);
@@ -24,12 +24,13 @@ const Nav = () => {
         }
     };
     return (
-        <div className="relative">
-            <nav className="flex fixed w-screen gap-4 items-center justify-between mb-3 px-3 py-1 bg-lime-300 text-blue shadow-slate-700 shadow-[0px_0px_10px]">
+        <div className="relative z-20">
+            <nav className="flex fixed w-screen gap-4 items-center justify-between mb-3 px-6 py-1 bg-lime-300 text-blue shadow-slate-700 shadow-[0px_0px_10px]">
                 <div>
-                    <Link to={"/"} className="font-R text-[30px] font-thin">
+                    <Link to={"/"} className="font-R text-[30px] font-2xl font-U">
                         TextGuard
                     </Link>
+                    {console.log(localStorage.getItem("token"))}
                 </div>
                 <div className="flex gap-3 font-R font-thin">
                     <div className="font-bold text-xl">

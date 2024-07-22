@@ -1,11 +1,13 @@
-// server/routes/user.js
 const express = require("express");
 const router = express.Router();
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const cookie =require("cookie-parser")
-const SECRET_KEY = "your_secret_key";
+require("dotenv").config();
+
+const SECRET_KEY = process.env.SECRET_KEY;
+
+console.log(SECRET_KEY);
 
 router.post("/register", async (req, res) => {
     const { username, password } = req.body;
@@ -15,7 +17,8 @@ router.post("/register", async (req, res) => {
             return res.status(400).json({ message: "User already exists" });
         }
 
-        const user = new User({ username, password });
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const user = new User({ username, password: hashedPassword });
         await user.save();
 
         const token = jwt.sign({ userId: user._id }, SECRET_KEY, {
@@ -29,8 +32,10 @@ router.post("/register", async (req, res) => {
 
 router.post("/login", async (req, res) => {
     const { username, password } = req.body;
+    console.log(username, password);
     try {
         const user = await User.findOne({ username });
+        console.log(user);
         if (!user) {
             return res.status(400).json({ message: "Invalid credentials" });
         }
@@ -39,12 +44,13 @@ router.post("/login", async (req, res) => {
         if (!isMatch) {
             return res.status(400).json({ message: "Invalid credentials" });
         }
-
+        console.log(user);
         const token = jwt.sign({ userId: user._id }, SECRET_KEY, {
             expiresIn: "1h",
         });
+
+        res.cookie("token", token, { httpOnly: true, maxAge: 3600000 }); // 1 hour
         res.status(200).json({ message: "Login successful", token });
-        cookie.signedCookie(token, token)
     } catch (error) {
         res.status(500).json({ message: "Server error" });
     }
@@ -52,9 +58,15 @@ router.post("/login", async (req, res) => {
 
 // Middleware to verify JWT token
 const verifyToken = (req, res, next) => {
-    const token = req.body.token || req.query.token || req.headers["x-access-token"];
+    const token =
+        req.cookies.token ||
+        req.body.token ||
+        req.query.token ||
+        req.headers["x-access-token"];
     if (!token) {
-        return res.status(403).json({ message: "Token is required for authentication" });
+        return res
+            .status(403)
+            .json({ message: "Token is required for authentication" });
     }
     try {
         const decoded = jwt.verify(token, SECRET_KEY);
@@ -73,7 +85,10 @@ router.post("/saveData", verifyToken, async (req, res) => {
         const user = await User.findById(userId);
         user.savedData.push({ topic, data });
         await user.save();
-        res.status(200).json({ message: "Data saved successfully", savedData: user.savedData });
+        res.status(200).json({
+            message: "Data saved successfully",
+            savedData: user.savedData,
+        });
     } catch (error) {
         console.error("Error saving data", error);
         res.status(500).json({ message: "Server error" });
@@ -98,9 +113,14 @@ router.delete("/deleteData/:id", verifyToken, async (req, res) => {
     const { id } = req.params;
     try {
         const user = await User.findById(userId);
-        user.savedData = user.savedData.filter(item => item._id.toString() !== id);
+        user.savedData = user.savedData.filter(
+            (item) => item._id.toString() !== id
+        );
         await user.save();
-        res.status(200).json({ message: "Data deleted successfully", savedData: user.savedData });
+        res.status(200).json({
+            message: "Data deleted successfully",
+            savedData: user.savedData,
+        });
     } catch (error) {
         console.error("Error deleting data", error);
         res.status(500).json({ message: "Server error" });
@@ -108,7 +128,7 @@ router.delete("/deleteData/:id", verifyToken, async (req, res) => {
 });
 
 // Update data endpoint
-router.put("/updateData/:id", async (req, res) => {
+router.put("/updateData/:id", verifyToken, async (req, res) => {
     const { id } = req.params;
     const { topic, data } = req.body;
 

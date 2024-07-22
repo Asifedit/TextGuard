@@ -27,6 +27,9 @@ app.use(myLogger); // Apply conditionally if needed
 
 // Routes
 app.use("/api/users", userRoutes);
+app.get('/health', (req, res) => {
+    res.status(200).json({ message: "Server is running" });
+});
 
 // MongoDB connection
 mongoose

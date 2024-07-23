@@ -27,15 +27,15 @@ const Nav = () => {
         <div className="relative z-20">
             <nav className="flex fixed w-screen gap-4 items-center justify-between mb-3 px-6 py-1 bg-lime-300 text-blue shadow-slate-700 shadow-[0px_0px_10px]">
                 <div>
-                    <Link to={"/"} className="font-R text-[30px] font-2xl font-U">
+                    <Link to={"/"} className="font-R text-[30px] font-2xl font-U max-[550px]:text-xl">
                         TextGuard
                     </Link>
                     {console.log(localStorage.getItem("token"))}
                 </div>
                 <div className="flex gap-3 font-R font-thin">
                     <div className="font-bold text-xl">
-                        <i className="fa-brands fa-github font-bold pr-1"></i>
-                        GITHUB
+                        <Link to={"https://github.com/Asifedit/TextGuard.git"} className="fa-brands fa-github font-bold pr-1"></Link>
+                    
                     </div>
                     <Link
                         onClick={handeltoken}

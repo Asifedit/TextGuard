@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 const Login = ({ setToken }) => {
     const SERVERurl = import.meta.env.VITE_API_URL;
@@ -13,15 +14,17 @@ const Login = ({ setToken }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
+            toast.loading( "wait ....")
             const response = await axios.post(`${SERVERurl}/login`, {
                 username,
                 password,
             });
-alert("API URL:", SERVERurl)
             if (response.data) {
                 setMessage(response.data.message);
                 setToken(response.data.token);
                 localStorage.setItem("token", response.data.token);
+                 
+                toast.success("successfuly login");
                 navigate("/dashboard");
             } else {
                 setMessage("Unexpected response from server.");
@@ -31,6 +34,11 @@ alert("API URL:", SERVERurl)
                 error.response?.data?.message ||
                 "An error occurred. Please try again.";
             setMessage(errorMessage);
+            toast.error(" server error Please try again ");
+            
+        }
+        finally {
+            toast.dismiss();
         }
     };
 
@@ -75,7 +83,7 @@ alert("API URL:", SERVERurl)
                         />
                         {password.length > 0 && (
                             <i
-                                className={`fas text-gray-500 absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer ${
+                                className={`fas text-gray-500 absolute right-3 top-12 transform -translate-y-1/2 cursor-pointer ${
                                     showPassword ? "fa-eye-slash" : "fa-eye"
                                 }`}
                                 onClick={toggleShowPassword}

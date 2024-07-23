@@ -43,54 +43,63 @@ const Login = ({ setToken }) => {
     };
 
     return (
-        <div className="flex relative w-screen h-screen justify-center items-center">
-            <div className="myShadwo2 p-11 rounded-md">
-                <h2 className="text-3xl md:w-96 w-2/3 text-lime-500 uppercase font-U">
+        <div className="flex min-h-screen justify-center items-center bg-gray-100">
+            <div className="bg-white shadow-lg p-8 rounded-lg w-full max-w-md mx-4 divshadwo">
+                <h2 className="text-3xl text-center text-lime-500 uppercase font-bold mb-6">
                     Login
                 </h2>
-                <form onSubmit={handleSubmit} className="md:w-96 w-2/3 grid">
-                    <div className="Flex">
-                        <label>Username:</label>
+                <form onSubmit={handleSubmit} className="space-y-4 flex flex-col">
+                    <div className="flex flex-col">
+                        <label className="mb-2 text-sm font-medium text-gray-700">
+                            Username:
+                        </label>
                         <input
                             type="text"
-                            className="h-8 rounded myShadwo2 px-3"
+                            className="h-10 rounded myShadwo2  border px-3 "
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
                             required
                         />
                     </div>
-                    <div className="Flex">
-                        <label>Password:</label>
+                    <div className="flex flex-col relative table-desing">
+                        <label className="mb-2 text-sm font-medium text-gray-700">
+                            Password:
+                        </label>
                         <input
-                            type={showPassword ? "password" : "text"}
-                            className="h-8 rounded myShadwo2 px-3"
+                            type={showPassword ? "text" : "password"}
+                            className="h-10 rounded border px-3   myShadwo2 "
                             value={password}
                             onChange={handlePasswordChange}
                             required
                         />
                         {password.length > 0 && (
                             <i
-                                className={`fas pt-6 text-blue ${
+                                className={`fas text-gray-500 absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer ${
                                     showPassword ? "fa-eye-slash" : "fa-eye"
-                                } absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer`}
+                                }`}
                                 onClick={toggleShowPassword}
                             ></i>
                         )}
                     </div>
-                    <p className="text-sm">
+                    <p className="text-sm text-center">
                         Don't have an account?{" "}
-                        <Link className="text-blue" to="/register">
+                        <Link
+                            className="text-blue hover:underline"
+                            to="/register"
+                        >
                             Register
                         </Link>
                     </p>
                     <button
                         type="submit"
-                        className="text-center bg-lime-600 m-auto px-7 py-2 mt-10 myShadwo rounded-md"
+                        className="w-20 m-auto py-2 bg-lime-600 text-white rounded hover:bg-lime-700 transition duration-300"
                     >
                         Login
                     </button>
                 </form>
-                {message && <p>{message}</p>}
+                {message && (
+                    <p className="mt-4 text-center text-red-600">{message}</p>
+                )}
             </div>
         </div>
     );

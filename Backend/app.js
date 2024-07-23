@@ -14,16 +14,19 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(cookieParser());
 
+let logenter = []
 // Conditional logging middleware
 const myLogger = function (req, res, next) {
-    if (req.path.startsWith("/api/users")) {
-        console.log("Request to /api/users received at: ", new Date());
-    }
-    next();
+    console.log(req.rawHeaders);
+   
+    next()
 };
 
 app.use(myLogger); // Apply conditionally if needed
 
+app.get("/", (req, res) => {
+    res.send("ok");
+})
 // Routes
 app.use("/api/users", userRoutes);
 

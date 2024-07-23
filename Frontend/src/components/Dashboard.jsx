@@ -12,13 +12,8 @@ const Dashboard = () => {
     const SERVERurl = import.meta.env.VITE_API_URL;
 
     useEffect(() => {
-        if (token) {
-            fetchData();
-        } else {
-            return false;
-        }
-    }, [savedData]);
-
+        fetchData();
+    }, []);
     const fetchData = async () => {
         try {
             const response = await axios.get(`${SERVERurl}/getData`, {
@@ -31,22 +26,36 @@ const Dashboard = () => {
         }
     };
 
-    const handleSave = async () => {
-        try {
-            const response = await axios.post(`${SERVERurl}/saveData`, {
-                token,
-                topic,
-                data,
-            });
-            setSavedData((prevData) => [...prevData, response.data.savedData]);
-            setTopic("");
-            setData("");
-            toast.success("Data saved successfully");
-        } catch (error) {
-            console.error("Error saving data", error);
-            toast.error("Sorry, we couldn't save");
-        }
+   const handleSave = async () => {
+    const saveData = async () => {
+      const response = await axios.post(`${SERVERurl}/saveData`, {
+        token,
+        topic,
+        data,
+      });
+        fetchData();
+        return response.data.savedData;
+        
     };
+
+    toast.promise(
+      saveData(),
+      {
+        loading: 'Saving...',
+        success: 'Updated successfully',
+        error: "Sorry, we couldn't save",
+      }
+    ).then(
+      (newData) => {
+        setSavedData((prevData) => [...prevData, newData]);
+        setTopic("");
+        setData("");
+      }
+    ).catch((error) => {
+      console.error("Error saving data", error);
+    });
+  };
+
 
     const handleDelete = async (itemId) => {
         try {
@@ -109,6 +118,9 @@ const Dashboard = () => {
             console.error("Failed to read clipboard contents: ", error);
         }
     };
+        useEffect(() => {
+            fetchData();
+        }, []);
     return (
         <div className="flex flex-col pt-14 justify-center w-full overflow-auto h-full items-center gap-3">
             <h2 className="text-5xl pt-3 text-lime-500">
@@ -151,13 +163,13 @@ const Dashboard = () => {
             >
                 Save
             </button>
-            <div className="px-2 w-full">
+            <div className="px-2 w-full flex-auto">
                 <h3 className="px-4 w-full">Your data</h3>
                 <div>
                     <div className="flex bg-lime-600 text-white font-bold">
                         <div className="w-[45%] p-1">Topic</div>
                         <div className="w-[45%] p-2">Data</div>
-                        <div className="w-[10%] p-2 text-center">Tool</div>
+                        <div className="w-[10%]  p-2 text-center">Tool</div>
                     </div>
                     <div className="divide-y-2 bg-lime-200">
                         {savedData.map((item) => (
@@ -176,7 +188,7 @@ const Dashboard = () => {
                                         }
                                     ></i>
                                 </div>
-                                <div className="w-[45%] p-2 flex items-center">
+                                <div className="w-[45%]  p-2 flex items-center">
                                     <p className="w-[95%] overflow-hidden overflow-ellipsis whitespace-nowrap">
                                         {item.data}
                                     </p>
@@ -219,5 +231,4 @@ const Dashboard = () => {
         </div>
     );
 };
-
 export default Dashboard;

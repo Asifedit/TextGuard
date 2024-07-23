@@ -17,6 +17,7 @@ const Login = ({ setToken }) => {
                 username,
                 password,
             });
+alert("API URL:", SERVERurl)
             if (response.data) {
                 setMessage(response.data.message);
                 setToken(response.data.token);

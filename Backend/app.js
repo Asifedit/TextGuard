@@ -17,7 +17,7 @@ app.use(cookieParser());
 let logenter = []
 // Conditional logging middleware
 const myLogger = function (req, res, next) {
-    console.log(req.rawHeaders);
+    console.log(req.url,req.ip);
    
     next()
 };

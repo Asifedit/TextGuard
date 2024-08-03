@@ -20,7 +20,7 @@ router.post("/register", async (req, res) => {
         await user.save();
 
         const token = jwt.sign({ userId: user._id }, SECRET_KEY, {
-            expiresIn: "1h",
+            expiresIn: "12d",
         });
         res.status(201).json({ message: "User created successfully", token });
     } catch (error) {
@@ -44,7 +44,7 @@ router.post("/login", async (req, res) => {
         }
         console.log(user);
         const token = jwt.sign({ userId: user._id }, SECRET_KEY, {
-            expiresIn: "1h",
+            expiresIn: "28d",
         });
 
         res.cookie("token", token, { httpOnly: true, maxAge: 3600000 }); // 1 hour
